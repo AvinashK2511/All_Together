@@ -51,16 +51,6 @@
 
 ---
 
-## 🌍 Deployment on Netlify
-
-1. Push your code to **GitHub**  
-2. Go to **Netlify** and create a new site from Git  
-3. Set **build command** to: `npm run build`  
-4. Set **publish directory** to: `dist`  
-5. Click **Deploy**
-
----
-
 ## 🔁 User Flow
 
 - User logs in as a family member (Dad, Mom, Kid)  
