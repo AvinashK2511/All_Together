@@ -1,0 +1,83 @@
+import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
+import { Pencil, Trash2 } from "lucide-react";
+
+interface TaskListProps {
+  tasks: any[];
+  selectedDate?: Date;
+  currentUser: string;
+  onEdit: (task: any) => void;
+  onDelete: (id: number) => void;
+  filterUser: string;
+  setFilterUser: (user: string) => void;
+  view: "calendar" | "all";
+  familyMembers: string[];
+  getPriorityColor: (priority: string) => string;
+}
+
+export default function TaskList({
+  tasks,
+  selectedDate = new Date(),
+  currentUser,
+  onEdit,
+  onDelete,
+  filterUser,
+  setFilterUser,
+  view,
+  familyMembers,
+  getPriorityColor
+}: TaskListProps) {
+  const filtered = tasks.filter(task =>
+    view === "calendar"
+      ? format(task.date, "yyyy-MM-dd") === format(selectedDate, "yyyy-MM-dd") &&
+        (filterUser === "all" || task.person === filterUser)
+      : filterUser === "all" || task.person === filterUser
+  );
+
+  const sorted = view === "all"
+    ? filtered.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    : filtered;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <h2 className="text-lg font-semibold text-indigo-800">
+          {view === "calendar" ? `Tasks on ${format(selectedDate, "PPP")}` : "All Tasks & Events"}
+        </h2>
+        <select
+          className="text-sm border rounded px-2 py-1"
+          value={filterUser}
+          onChange={e => setFilterUser(e.target.value)}
+        >
+          <option value="all">All</option>
+          {familyMembers.map(member => (
+            <option key={member} value={member}>{member}</option>
+          ))}
+        </select>
+      </div>
+
+      {sorted.length === 0 && (
+        <p className="text-slate-500">No tasks {view === "calendar" ? "for this day" : "added yet"}.</p>
+      )}
+
+      {sorted.map(task => (
+        <div key={task.id} className={`rounded p-3 ${getPriorityColor(task.priority)} flex justify-between items-center shadow-sm`}>
+          <div>
+            <strong className="text-base">{task.name}</strong>
+            {view === "all" && ` on ${format(task.date, "PPP")}`} ({task.priority})<br />
+            <span className="text-sm">{task.description}</span><br />
+            <span className="text-xs italic">— {task.person}</span>
+          </div>
+          <div className="space-x-2">
+            {task.person === currentUser && (
+              <>
+                <Button size="sm" variant="ghost" onClick={() => onEdit(task)}><Pencil size={16} /></Button>
+                <Button size="sm" variant="ghost" onClick={() => onDelete(task.id)}><Trash2 size={16} /></Button>
+              </>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
