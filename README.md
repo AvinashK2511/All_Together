@@ -61,22 +61,6 @@
 
 ---
 
-## 📂 Project Structure
-
-```
-All_Together/
-├── public/  
-│   └── mascot.svg  
-├── src/  
-│   ├── components/  
-│   ├── App.tsx  
-│   └── main.tsx  
-├── index.html  
-└── README.md
-```
-
----
-
 ## 🔮 Future Enhancements
 
 - 📱 Push notification integration  
