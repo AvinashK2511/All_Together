@@ -1,0 +1,62 @@
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
+
+interface TaskFormProps {
+  onSubmit: (task: any) => void;
+  form: any;
+  setForm: (form: any) => void;
+  editingTaskId: number | null;
+  selectedDate: Date;
+}
+
+export default function TaskForm({ onSubmit, form, setForm, editingTaskId, selectedDate }: TaskFormProps) {
+  const [error, setError] = useState<string>("");
+
+  useEffect(() => {
+    if (form.name.trim() !== "") {
+      setError("");
+    }
+  }, [form.name]);
+
+  const handleSubmit = () => {
+    if (!form.name.trim()) {
+      setError("Please enter a task name.");
+      return;
+    }
+    onSubmit({ ...form, date: selectedDate });
+    setForm({ name: "", description: "", priority: "normal", person: "" });
+  };
+
+  return (
+    <div className="space-y-4">
+      <h2 className="text-xl font-bold text-indigo-800">
+        {editingTaskId ? "Edit Task" : "Add Task/Event"} for {selectedDate.toDateString()}
+      </h2>
+      <Input
+        placeholder="Event/Task Name"
+        value={form.name}
+        onChange={e => setForm({ ...form, name: e.target.value })}
+      />
+      {error && <p className="text-red-500 text-sm">{error}</p>}
+      <Textarea
+        placeholder="Description"
+        value={form.description}
+        onChange={e => setForm({ ...form, description: e.target.value })}
+      />
+      <select
+        className="w-full p-2 rounded border focus:outline-indigo-500"
+        value={form.priority}
+        onChange={e => setForm({ ...form, priority: e.target.value })}
+      >
+        <option value="high">High</option>
+        <option value="medium">Medium</option>
+        <option value="normal">Normal</option>
+      </select>
+      <Button onClick={handleSubmit} className="bg-indigo-600 hover:bg-indigo-700 text-white">
+        {editingTaskId ? "Update Task" : "Add Task"}
+      </Button>
+    </div>
+  );
+}
